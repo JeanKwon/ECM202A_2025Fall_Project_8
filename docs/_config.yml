@@ -8,7 +8,7 @@ title: "EC M202A Project – Project Title"
 description: "Course project website for EC M202A / CS M213A"
 # For user pages, url should be "https://username.github.io" and baseurl: ""
 # For project pages, url: "https://username.github.io" and baseurl: "/repo-name"
-url: "https://jeankwon.github.io"        # replace UCLA-ECEM202A with your github id
+url: "https://JeanKwon.github.io"        # replace UCLA-ECEM202A with your github id
 baseurl: "/ECM202A_2025Fall_Project_8"    # replace ecem202a_project with your project name, e.g., "/ECEM202A_2025Fall_Project_1"
 
 markdown: kramdown
