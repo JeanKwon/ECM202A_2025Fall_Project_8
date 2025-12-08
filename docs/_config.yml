@@ -16,4 +16,6 @@ kramdown:
   input: GFM
 
 # Necessary for GitHub Pages
-plugins: []
+plugins:
+  - jekyll-feed
+
