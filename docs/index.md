@@ -7,7 +7,7 @@ title: "Project Title"
 
 *A concise, descriptive title for your project.*
 
-![Project Banner]({{ site.baseurl }}/assets/img/banner-placeholder.png)
+![Project Banner](./assets/img/banner-placeholder.png)
 <sub>*(Optional: Replace with a conceptual figure or meaningful image.)*</sub>
 
 ---
