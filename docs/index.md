@@ -59,13 +59,14 @@ Sela et al. propose Octopus, a context-aware perception framework that dynamical
 2. Cloud-Assisted Autonomous Driving
 Krentsel et al. study the feasibility of cloud-assisted perception for autonomous driving, arguing that modern cloud GPUs can execute significantly more accurate perception models faster than onboard hardware when sufficient bandwidth is available [Krentsel24]. Their results show that cloud can run detection model 4 to 19 times faster than Jetson orin depends on the perception model. This work strongly motivates the use of cloud resources and directly informs the cost and performance assumptions of this project while deomnstrating the feasbility of cloud assistied driving. However, it allocates cloud resources solely based on bandwidth availability rather than perceptual necessity.
 
-3. 
+3. Edge-Cloud Collaboration in Autonomous Drivings
+Chen et al. propose EC-Drive, an edge–cloud collaborative autonomous driving system that uses small on-vehicle LLMs for routine motion planning while selectively offloading “hard cases” to a cloud LLM when data drift or low-confidence is detected, thereby reducing communication overhead while improving performance on complex scenarios [Chen24]. As it leverages the use of cloud as part of autonomous driving pipeline, it supports the idea of using cloud perception in autonomous vhicles perception. However, this system is driven by condfidence signals rather than considering the complexity of the given scenes.
 
+4. Speed–Accuracy Trade-offs in Vision-Based Perception
+Bolya et al. introduce YOLACT, a one-stage framework for real-time instance segmentation that speeds up mask prediction by combining a small set of shared prototype masks with simple per-object coefficients, allowing fast mask generation while maintaining competitive accuracy [Bolya19]. It exemplifies  improving visual understanding typically requires more computation, which can threaten strict latency budgetsm, motivating for perception system. While YOLACT itself focuses on designing a faster single-device model rather than hybrid execution, its demonstrated speed–accuracy trade-offs motivate the use of multiple perception models.
 
-Summarize prior works relevant to your project.  
-For each: what did the authors do, how is it related, and what gap remains?
-
-Reference all citations in **Section 6**.
+5. Cloud-Assisted Perception for Safety-Critical Autonomous Driving
+Schafhalter et al. investigate how autonomous vehicles can safely leverage cloud computing to improve perception and decision accuracy despite unreliable network latency, proposing a speculative execution framework that runs higher-accuracy models in the cloud while always maintaining a local fallback [Schafhalter23]. The authors identify three mechanisms—offloading higher-accuracy models, improving environment representation beyond onboard sensing, and cloud-based contingency planning—that allow cloud computation to enhance safety without compromising real-time guarantees. This paper deploys the idea of having a hybrid perception, similar to what this work is aiming to do. However, the system focuses on providing execution abstractions rather than deciding when cloud inference is perceptually necessary, and it does not explicitly use the frame and system information to guide offloading decisions. 
 
 ---
 
@@ -153,6 +154,14 @@ Modeling or training the max perception latency allowed related to the current e
 **[Sela22]** G.-E. Sela, I. Gog, J. Wong, K. K. Agrawal, X. Mo, S. Kalra, P. Schafhalter, E. Leong, X. Wang, B. Balaji, J. Gonzalez, and I. Stoica, “Context-Aware Streaming Perception in Dynamic Environments,” arXiv preprint, arXiv:2208.07479, Aug. 2022. [Online]. Available: https://arxiv.org/abs/2208.07479. [Accessed: Dec. 12, 2025]. 
 
 **[Krentsel24]** A. Krentsel, P. Schafhalter, J. E. Gonzalez, S. Ratnasamy, S. Shenker, and I. Stoica, “Managing Bandwidth: The Key to Cloud-Assisted Autonomous Driving,” arXiv preprint, arXiv:2410.16227, Oct. 2024. [Online]. Available: https://arxiv.org/abs/2410.16227. [Accessed: Dec. 12, 2025]
+
+**[Chen24]** J. Chen, S. Dai, F. Chen, Z. Lv, and J. Tang, “Edge-Cloud Collaborative Motion Planning for Autonomous Driving with Large Language Models,” arXiv preprint, arXiv:2408.09972, Aug. 2024. [Online]. Available: https://arxiv.org/abs/2408.09972
+. [Accessed: Dec. 12, 2025].
+
+**[Bolya19]** D. Bolya, C. Zhou, F. Xiao, and Y. J. Lee, “YOLACT: Real-Time Instance Segmentation,” in Proc. IEEE/CVF Int. Conf. Comput. Vis. (ICCV), 2019.
+
+**[Schafhalter23]** P. Schafhalter, S. Kalra, L. Xu, J. E. Gonzalez, and I. Stoica, “Leveraging Cloud Computing to Make Autonomous Vehicles Safer,” arXiv preprint, arXiv:2308.03204, Aug. 2023. [Online]. Available: https://arxiv.org/abs/2308.03204
+. [Accessed: Dec. 12, 2025].
 
 
 ---
