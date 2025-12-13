@@ -62,53 +62,67 @@ Reference all citations in **Section 6**.
 
 # **3. Technical Approach**
 
-Describe your system, methodology, algorithms, and design choices.  
-Use figures generously:
-
-- System architecture diagram  
-- Data pipeline  
-- Algorithm/model block diagram  
-- Hardware setup photos  
-
-💡 Tip: Add images, diagrams, and code snippets. Make your system reproducible.
-
-Recommended subsections:
-
 ### **3.1 System Architecture**
 ![Project Banner](./assets/img/system_architecture.png)
+Figure 1 System overview  
+A diagram above illustrates the end-to-end flow. Incoming camera frames are processed in Jetson. Based on the scene compleixty and current network constraints, the system selects either a local YOLO 11n running on Jetson or a more accurate cloud-based YOLO 11x. Then Jetson requests cloud for YOLO 11x execution, and cloud sends the perception result back. 
 
 ### **3.2 Data Pipeline**
-Explain how data is collected, processed, and used.
+It is assumed that the RGB camera will provide an image frame that is in JPEG format. The image will be an input to lightweight CNN to decide wheter the scene is complex or not. After considering network condition and scene complexity, if the frame needs to be processed in cloud, Jetson sends over an image frame to cloud as shown in Figure 1. With the received image, the cloud runs a perception and sends back the perception result to the Jetson. 
 
 ### **3.3 Algorithm / Model Details**
 ![Project Banner](./assets/img/systemflow.jpg)
+Figure 2 System Flow 
+If it is available, then it checks if the cloud YOLO 11x execution time plus current network latency between Jetson and A6000 is smaller than the max perception latency allowed. Then, using the trained CNN, it checks if the scene is complex. If the frame meets the requirements, then the cloud YOLO 11x is used. If it fails to meet any network condition or the frame is classified to be simple, then local YOLo 11n is used. 
 
 ### **3.4 Hardware / Software Implementation**
-Explain equipment, libraries, or frameworks.
+Hardware:
+* Jetson Orin
+* A6000
+Software Libraries:
+* Python 3.8, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
 
 ### **3.5 Key Design Decisions & Rationale**
-Describe the main design decisions you made.
-
+* Hybrid Edge–Cloud Architecture to balance latency guarantees and cost while maintaining higher accuracy than fully local YOLO 11n scenario.
+* Latency-Aware Fallback Logic: If the cloud perception result does not arrive by the max perception latency allowed, the local perception result is used.
+* Lightweight CNN Gating:Utilize a lightweight simple CNN to minimize decision time in time sensitive system. 
 ---
 
 # **4. Evaluation & Results**
+### **4.1 CNN Performance**
+CNN takes a JEPG image as an input and gives a binary output for simple and complex. It consists of stacked convolutional blocks for spatial feature extraction, followed by flattening and two fully connected layers that map the learned features to a binary scene-selection output. It was trained with ~24000 frames and achieved 98.98% validation accuracy. The average execution time of this CNN model on Jetson Orin is 1.267ms. 
+![Project Banner](./assets/img/cnn_map.png)
+Figure 3 CNN Saliency map visualizing the pixel regions that contribute most to the CNN’s binary classification decision for scene selection.
+Table 1 CNN and Feature Correlations 
+![Project Banner](./assets/img/cnn_correlation.png)
+Figure 3 shows which region does CNN look the most to make a decision. As shown in Table 1, scene complexity is strongly tied to object density, espcially the number of vehicles. Complexity scene score increases when there are more objects (traffic participants) in the frame while brightness has a mere contribution. 
 
-Present experimental results with clarity and professionalism.
+### **4.2 Hybrid System Performance**
+Experiment Assumption: 
+Camera Frames are coming in 10 FPS (Waymo dataset rate) which means each frame needs to be processed within 100ms. For the experiment, max perception latency allowed is set to be 90ms. 
+It is compared with the latest cloud frame YOLO execution time + current network latency 
+Network availability is expressed in binary for simplipication. If the network is available, the cloud is available at its full capacity. Jetson Yolo 11n result is used if the cloud YOLO result doesn’t arrive back in 90ms. Total of 7967 frames are used for the experiment.  
 
-Include:
+Experiment Results:
+68% of the entire frame was processed locally with YOLO 11n and 32% was processed in the cloud with YOLO 11x. Table 2 compares detection accuracy across the three perception policies using mean absolute error (MAE) for vehicle and pedestrian counts. The hybrid approach improves accuracy over local-only inference while using cloud resources for less than one-third of frames. It retains approximately 75% of the accuracy benefit of cloud-only perception at a lower cloud utilization rate. 
 
-- Plots (accuracy, latency, energy, error curves)  
-- Tables (comparisons with baselines)  
-- Qualitative visualizations (spectrograms, heatmaps, bounding boxes, screenshots)  
-- Ablation studies  
-- Error analysis / failure cases
+Table 2  Local vs Cloud vs Hybrid Perception
+![Project Banner](./assets/img/hybridperception.png)
 
-Each figure should have a caption and a short interpretation.
+Table 3 shows the latency distribution for local inference, cloud inference, and network RTT. Cloud inference is computationally faster than local inference; but, network latency is a huge facotr. The hybrid policy ensures cloud inference is only used when total latency remains within the allowed budget.
+
+Table 3 Latency of Hybrid Perception
+![Project Banner](./assets/img/latency.png)
 
 ---
 
 # **5. Discussion & Conclusions**
 
+The hybrid perception framework successfully aligned computational effort with scene complexity. The lightweight CNN-based gating model proved effective at identifying high-density, complex scenes while introducing negligible overhead, enabling real-time operation. 
+
+Limitations: 
+
+Future Direction: 
 Synthesize the main insights from your work.
 
 - What worked well and why?  
@@ -140,7 +154,7 @@ Waymo Perception Dataset V2.0.1
 ## **7.b. Software**
 
 List:
-* Python 3.9, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
+* Python 3.8, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
 * Links to repos 
 
 ---
