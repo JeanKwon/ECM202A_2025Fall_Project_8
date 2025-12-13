@@ -1,7 +1,7 @@
 
 # **Context-Aware Hybrid Object Detection for Autonomous Vehicle Perception**
 
-![Project Banner](./assets/img/banner-placeholder.png)
+![Project Banner](./assets/img/banner.jpg)
 
 ---
 
@@ -101,7 +101,12 @@ Figure 3 shows which region does CNN look the most to make a decision. As shown 
 Experiment Assumption: 
 Camera Frames are coming in 10 FPS (Waymo dataset rate) which means each frame needs to be processed within 100ms. For the experiment, max perception latency allowed is set to be 90ms. 
 It is compared with the latest cloud frame YOLO execution time + current network latency 
-Network availability is expressed in binary for simplipication. If the network is available, the cloud is available at its full capacity. Jetson Yolo 11n result is used if the cloud YOLO result doesn’t arrive back in 90ms. Total of 7967 frames are used for the experiment.  
+Network availability is expressed in binary for simplipication. If the network is available, the cloud is available at its full capacity. Jetson Yolo 11n result is used if the cloud YOLO result doesn’t arrive back in 90ms. 
+
+Experiment Setup: 
+Total of 7967 frames are used for the experiment. The experimental system implements a three-node hybrid edge–cloud inference pipeline composed of (i) an NVIDIA Jetson edge device, which executes the main control logic, runs a lightweight CNN scene classifier, performs local object detection using YOLOv11n, and dynamically decides whether to offload inference; (ii) a Windows relay node, which acts as a network bridge between the Jetson and the cloud GPU server by hosting an HTTP relay service that exposes a /ping endpoint for latency measurement and forwards /infer requests; and (iii) an NVIDIA A6000 cloud GPU server, which runs the high-capacity YOLOv11x detector and returns detection outputs along with model execution time. All cloud-bound traffic follows the fixed communication path Jetson → Windows Relay → A6000 → Windows Relay → Jetson, enabling the Jetson to offload computation without directly connecting to or exposing the cloud server while providing a controlled point for monitoring latency and handling failures. Although this three-hop topology is not a fully realistic deployment architecture for production autonomous vehicles, the relay was intentionally introduced for experimental practicality to simplify network configuration and routing between heterogeneous systems, provides a stable and debuggable interface. The latency between Window Relay and Jetson was considered as the network latency between the cloud and local. 
+![Project Banner](./assets/img/flow.png)
+Figure 4 Experimental three-node edge–cloud inference pipeline with a Jetson edge device, Windows relay for latency measurement and request forwarding, and an A6000 cloud GPU running YOLOv11x. The relay is used for experimental control and instrumentation rather than realistic AV deployment.
 
 Experiment Results:
 68% of the entire frame was processed locally with YOLO 11n and 32% was processed in the cloud with YOLO 11x. Table 2 compares detection accuracy across the three perception policies using mean absolute error (MAE) for vehicle and pedestrian counts. The hybrid approach improves accuracy over local-only inference while using cloud resources for less than one-third of frames. It retains approximately 75% of the accuracy benefit of cloud-only perception at a lower cloud utilization rate. 
@@ -118,19 +123,15 @@ Table 3 Latency of Hybrid Perception
 
 # **5. Discussion & Conclusions**
 
-The hybrid perception framework successfully aligned computational effort with scene complexity. The lightweight CNN-based gating model proved effective at identifying high-density, complex scenes while introducing negligible overhead, enabling real-time operation. 
+The hybrid perception framework aligned computational effort with scene complexity. The lightweight CNN-based model selector proved effective at identifying high-density, complex scenes while introducing negligible overhead, enabling real-time hybrid operation. However, network conditions related varibales are simplified which does not accruately capture the real world conditions. 
 
 Limitations: 
+Ntwork availability was treated as a binary condition, whereas real-world connectivity exhibits more nuanced behavior. Furthermore, the evaluation was conducted on pre-recorded data rather than in a closed-loop driving simulation, preventing direct assessment of downstream planning or control impacts.
 
 Future Direction: 
-Synthesize the main insights from your work.
+I would like to redefine problem statements. I did not properly set up what this new hybrid object detection system aims to solve (such as accuracy or latency). The problem statement can be strengthened by explicitly framing the project as an optimization problem with clear constraints and trade-offs, rather than describing it only as a hybrid system. 
 
-- What worked well and why?  
-- What didn’t work and why?  
-- What limitations remain?  
-- What would you explore next if you had more time?  
-
-This should synthesize—not merely repeat—your results.
+Modeling or training the max perception latency allowed related to the current ego vehicle speed and modeling the YOLO 11x execution speed on the average with the availability of the cloud would be useful to capture the real scenarios better. Integrating the perception framework into an end-to-end simulator such as CARLA would allow evaluation of its impact on driving behavior and safety. 
 
 ---
 
@@ -155,7 +156,7 @@ Waymo Perception Dataset V2.0.1
 
 List:
 * Python 3.8, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
-* Links to repos 
+* [Processed Data](https://github.com/JeanKwon/ECM202A_2025Fall_Project_8/blob/main/data/master_data.csv)
 
 ---
 
