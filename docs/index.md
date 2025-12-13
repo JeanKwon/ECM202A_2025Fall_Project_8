@@ -25,10 +25,8 @@ This project presents a context-aware hybrid perception framework for autonomous
 
 # **1. Introduction**
 
-It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running powerful perception models on the vehicles reduces lateny but limited by the onboard hardware while using the cloud with the powerful models gives a better accruacy but dependent on network condition. This project addresses this fundamental trade-off by proposing a hybrid, context-aware perception framework that dynamically balances local and cloud-based object detection.
-
 ### **1.1 Motivation & Objective**  
-What are you trying to do and why is it important? Explain in accessible, non-jargon terms.
+It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running advanced object detection models entirely on the vehicle reduces dependence on network connectivity but is limited by onboard compute and power budgets. On the other hand, cloud-based processing offers better accuracy but introduces variable network latency and reliability concerns. The objective of this project is to design a perception system that decides, in real time, whether to perform object detection locally or offload it to the cloud based on current driving context and system conditions. By doing so, the system aims to maximize perception accuracy while respecting strict latency and resource constraints.
 
 ### **1.2 State of the Art & Its Limitations**  
 How is this problem addressed today?  
@@ -36,16 +34,20 @@ What gaps or limitations exist?
 Cite prior work using a consistent style like [Smith21].
 
 ### **1.3 Novelty & Rationale**  
-What is new about your approach, and why do you expect it to succeed?
+The key novelty of this project is in its context-aware, data-driven model selection policy for hybrid perception. Instead of using predefined rules, the system employs learned decision models that incorporate multi-modal context, including scene complexity, vehicle state, and system/network conditions. A lightweight CNN-based gating model enables rapid scene assessment with minimal overhead, allowing the system to select the most appropriate detection model under a fixed latency budget. This system uses more computing power only when the scene is complex, while handling simpler situations locally, which improves efficiency without reducing safety.
 
 ### **1.4 Potential Impact**  
-If successful, what technical or broader impact could this project have?
+This project could demonstrate a scalable framework for adaptive edge–cloud collaboration under strict real-time constraints. It could reduce operational cloud costs, improve system robustness under variable network conditions, and contribute to safer autonomous driving. The framework is also extensible to other perception tasks and robotic systems beyond autonomous vehicles.
 
 ### **1.5 Challenges**  
-List the main technical, practical, or methodological challenges.
+The project could have several challenges such as designing a decision model that is both accurate and computationally lightweight, handling variability in network conditions in real time, and ensuring that fallback mechanisms preserve safety when issues emerge in cloud system.
+
 
 ### **1.6 Metrics of Success**  
-What are the specific, measurable criteria for evaluating your project?
+The successs of project is evaludated using the following metrics. 
+Perception Accuracy: Reduction in object count error compared to local-only inference.
+Cloud Utilization Rate: Percentage of frames offloaded to the cloud relative to total frames processed.
+Robustness: System behavior under varying network availability, including correct fallback to local processing.
 
 ---
 
@@ -73,13 +75,13 @@ Use figures generously:
 Recommended subsections:
 
 ### **3.1 System Architecture**
-Include a block diagram or pipeline figure.
+![Project Banner](./assets/img/system_architecture.png)
 
 ### **3.2 Data Pipeline**
 Explain how data is collected, processed, and used.
 
 ### **3.3 Algorithm / Model Details**
-Use math, pseudocode, or diagrams as needed.
+![Project Banner](./assets/img/systemflow.jpg)
 
 ### **3.4 Hardware / Software Implementation**
 Explain equipment, libraries, or frameworks.
@@ -128,19 +130,18 @@ Provide full citations for all sources (academic papers, websites, etc.) referen
 
 ## **7.a. Datasets**
 
-Describe each dataset:
-* Source and URL
-* Data format
-* Preprocessing steps
-* Labeling/annotation efforts
+Waymo Perception Dataset V2.0.1 
+* [Source and URL](https://waymo.com/open/download/)
+* Data format: The dataset is stored as Apache Parquet (.parquet) tables for each sensor/annotation modality. Records are synchronized across modalities using the composite frame identifiers segment_context_name (drive segment ID) and frame_timestamp_micros (frame timestamp), which together uniquely specify a single frame.
+* Preprocessing steps: Because the dataset is modularized across separate folders/files by modality, I reconstructed per-frame samples by joining the required sensor and annotation tables using segment_context_name and frame_timestamp_micros. For each frame, I extracted the relevant fields and exported consolidated per-frame features to CSV for training and evaluation. To support intuitive inspection and debugging, front-facing RGB camera frames are converted to JPEG images. 
+* Labeling/annotation efforts:The Waymo dataset is already annotated, so no additional manual is required. Relevant annotation-derived features are extracted and stored in a consolidated CSV indexed by the frame identifiers segment_context_name and frame_timestamp_micros to maintain alignment across modalities. An additional scene-level “complexity” label is needed for gating decisions model selector training. These labels are generated using unsupervised clustering. K-Means is applied to group frames based on traffic density (number of vehicles and pedestrians), ego-vehicle speed, and brightness. Cluster-level feature averages are then analyzed, and the cluster with higher object density and more dynamic driving conditions is labeled “complex,” while the other cluster is labeled “simple.”
+* [Processed Data](https://github.com/JeanKwon/ECM202A_2025Fall_Project_8/blob/main/data/master_data.csv)
 
-Include your internal dataset if you collected one.
 ## **7.b. Software**
 
 List:
-* External libraries or models
-* Internal modules you wrote
-* Links to repos or documentation
+* Python 3.9, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
+* Links to repos 
 
 ---
 
