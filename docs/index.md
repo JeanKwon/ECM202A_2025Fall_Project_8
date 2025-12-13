@@ -1,7 +1,3 @@
----
-layout: default
-title: "Project Title"
----
 
 # **Context-Aware Hybrid Object Detection for Autonomous Vehicle Perception**
 
@@ -22,22 +18,14 @@ This project presents a context-aware hybrid perception framework for autonomous
 
 ## 📑 **Slides**
 
-- [Midterm Checkpoint Slides](http://)  
-- [Final Presentation Slides](http://)
-
----
-
-> Delete this section if you have no videos.
-
-## 🎛️ **Media**
-
-- Links to any video or audio recordings demonstrating your project
+- [Midterm Checkpoint Slides](https://github.com/JeanKwon/ECM202A_2025Fall_Project_8/blob/main/docs/assets/Midterm%20Presentation%20.pptx%20(2).pdf)  
+- [Final Presentation Slides](https://github.com/JeanKwon/ECM202A_2025Fall_Project_8/blob/main/docs/assets/Final%20Presentation%20.pptx.pdf)
 
 ---
 
 # **1. Introduction**
 
-Use the introduction to clearly set context, describe motivation, and explain the central idea behind your project.
+It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running powerful perception models on the vehicles reduces lateny but limited by the onboard hardware while using the cloud with the powerful models gives a better accruacy but dependent on network condition. This project addresses this fundamental trade-off by proposing a hybrid, context-aware perception framework that dynamically balances local and cloud-based object detection.
 
 ### **1.1 Motivation & Objective**  
 What are you trying to do and why is it important? Explain in accessible, non-jargon terms.
