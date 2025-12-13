@@ -3,7 +3,7 @@ layout: default
 title: "Project Title"
 ---
 
-# **Project Title**
+# **Context-Aware Hybrid Object Detection for Autonomous Vehicle Perception**
 
 *A concise, descriptive title for your project.*
 
@@ -14,22 +14,12 @@ title: "Project Title"
 
 ## 👥 **Team**
 
-- Student Name #1 (email, GitHub)  
-- Student Name #2 *(delete if not applicable)*  
-- Student Name #3 *(delete if not applicable)*  
-
+- Hee Jean Kwon
 ---
 
 ## 📝 **Abstract**
 
-Provide a short paragraph (4–6 sentences) summarizing:
-
-- The problem you addressed  
-- Your approach  
-- Key results  
-- The significance of your findings  
-
-This should be a standalone “TL;DR” of your project.
+This project presents a context-aware hybrid perception framework for autonomous vehicles that dynamically selects between local and cloud-based object detection to balance latency, accuracy, and resource usage. The system leverages multi-modal contextual inputs—including scene complexity, vehicle state, and network conditions to make real-time offloading decisions using a data-driven model selector. Lightweight local models provide low-latency inference under constrained conditions, while more accurate cloud models are selectively used for complex scenes when network latency permits. Experimental results on the Waymo Perception Dataset demonstrate that the hybrid policy achieves approximately 75% of the accuracy benefits of full cloud offloading while using cloud resources only about one-third of the time. These results demonstrate the feasbility of edge–cloud collaboration for safe and efficient autonomous vehicle perception under constraints.
 
 ---
 
@@ -37,7 +27,6 @@ This should be a standalone “TL;DR” of your project.
 
 - [Midterm Checkpoint Slides](http://)  
 - [Final Presentation Slides](http://)
-- If Needed: Links to have any videos demonstrating your project
 
 ---
 
