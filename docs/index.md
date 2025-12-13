@@ -26,7 +26,7 @@ This project presents a context-aware hybrid perception framework for autonomous
 # **1. Introduction**
 
 ### **1.1 Motivation & Objective**  
-It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running advanced object detection models entirely on the vehicle reduces dependence on network connectivity but is limited by onboard compute and power budgets. On the other hand, cloud-based processing offers better accuracy but introduces variable network latency and reliability concerns. The objective of this project is to design a perception system that decides, in real time, whether to perform object detection locally or offload it to the cloud based on current driving context and system conditions. By doing so, the system aims to maximize perception accuracy while respecting strict latency and resource constraints.
+It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running advanced object detection models entirely on the vehicle reduces dependence on network connectivity but is limited by onboard compute and power budgets. On the other hand, cloud-based processing offers better accuracy but introduces variable network latency and reliability concerns. The objective of this project is to design a perception system that decides, in real time, whether to perform object detection locally or offload it to the cloud based on current driving context and system conditions. By doing so, the system aims to maximize perception accuracy while respecting strict latency and resource constraints. From a systems perspective, hybrid perception enables accuracy-aware cost control by aligning cloud resource usage with perceptual difficulty, avoiding unnecessary expenditure on cloud compute and bandwidth for simple driving scenarios.
 
 ### **1.2 State of the Art & Its Limitations**  
 Sela et al. propose Octopus, a context-aware streaming perception framework that dynamically switches perception configurations to maximize streaming accuracy rather than conventional offline accuracy [Sela22]. Octopus does a local inference using EfficientDet but dynamically swities the configuration of it using the context of the scenes. While Octopus demonstrates benefits by dynamically selecting models, it focuses on optimizing tracking accuracy within a single execution environment and does not explicitly consider edge–cloud offloading or network variability as part of the decision process. 
@@ -52,6 +52,15 @@ Robustness: System behavior under varying network availability, including correc
 ---
 
 # **2. Related Work**
+
+1. Context-Aware Streaming Perception
+Sela et al. propose Octopus, a context-aware perception framework that dynamically selects detection and tracking configurations to maximize streaming accuracy in real-time environments [Sela22]. Their key insight is that higher offline accuracy does not necessarily translate to better performance in streaming settings due to latency-induced ground-truth drift. By using environment features such as object density and motion, Octopus adapts perception configurations on a per-scenario basis and achieves significant gains over static model selection. This work is closely related as it uses the scene context to guide perception decisionns. However, because Octopus operates locally it does not address how additional compute resources in the cloud could be selectively leveraged under real-time constraints.
+
+2. Cloud-Assisted Autonomous Driving
+Krentsel et al. study the feasibility of cloud-assisted perception for autonomous driving, arguing that modern cloud GPUs can execute significantly more accurate perception models faster than onboard hardware when sufficient bandwidth is available [Krentsel24]. Their results show that cloud can run detection model 4 to 19 times faster than Jetson orin depends on the perception model. This work strongly motivates the use of cloud resources and directly informs the cost and performance assumptions of this project while deomnstrating the feasbility of cloud assistied driving. However, it allocates cloud resources solely based on bandwidth availability rather than perceptual necessity.
+
+3. 
+
 
 Summarize prior works relevant to your project.  
 For each: what did the authors do, how is it related, and what gap remains?
