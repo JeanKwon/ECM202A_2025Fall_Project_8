@@ -29,9 +29,9 @@ This project presents a context-aware hybrid perception framework for autonomous
 It is crucial for autonomous vehciels to detect surrdouning objects quicky and accrautely. Running advanced object detection models entirely on the vehicle reduces dependence on network connectivity but is limited by onboard compute and power budgets. On the other hand, cloud-based processing offers better accuracy but introduces variable network latency and reliability concerns. The objective of this project is to design a perception system that decides, in real time, whether to perform object detection locally or offload it to the cloud based on current driving context and system conditions. By doing so, the system aims to maximize perception accuracy while respecting strict latency and resource constraints.
 
 ### **1.2 State of the Art & Its Limitations**  
-How is this problem addressed today?  
-What gaps or limitations exist?  
-Cite prior work using a consistent style like [Smith21].
+Sela et al. propose Octopus, a context-aware streaming perception framework that dynamically switches perception configurations to maximize streaming accuracy rather than conventional offline accuracy [Sela22]. Octopus does a local inference using EfficientDet but dynamically swities the configuration of it using the context of the scenes. While Octopus demonstrates benefits by dynamically selecting models, it focuses on optimizing tracking accuracy within a single execution environment and does not explicitly consider edge–cloud offloading or network variability as part of the decision process. 
+
+On the other hand, Krentsel et al. examine cloud-assisted autonomous driving, arguing that cloud GPUs can execute more accurate perception models faster than onboard hardware when bandwidth is sufficient [Krentsel24]. Their work introduces a bandwidth-aware framework that allocates network resources to maximize service-level utility while meeting strict latency service-level objectives. This approach highlights the feasibility but does not incorporate scene-level difficulty or visual complexity into offloading decisions.
 
 ### **1.3 Novelty & Rationale**  
 The key novelty of this project is in its context-aware, data-driven model selection policy for hybrid perception. Instead of using predefined rules, the system employs learned decision models that incorporate multi-modal context, including scene complexity, vehicle state, and system/network conditions. A lightweight CNN-based gating model enables rapid scene assessment with minimal overhead, allowing the system to select the most appropriate detection model under a fixed latency budget. This system uses more computing power only when the scene is complex, while handling simpler situations locally, which improves efficiency without reducing safety.
@@ -104,8 +104,8 @@ It is compared with the latest cloud frame YOLO execution time + current network
 Network availability is expressed in binary for simplipication. If the network is available, the cloud is available at its full capacity. Jetson Yolo 11n result is used if the cloud YOLO result doesn’t arrive back in 90ms. 
 
 Experiment Setup: 
-Total of 7967 frames are used for the experiment. The experimental system implements a three-node hybrid edge–cloud inference pipeline composed of (i) an NVIDIA Jetson edge device, which executes the main control logic, runs a lightweight CNN scene classifier, performs local object detection using YOLOv11n, and dynamically decides whether to offload inference; (ii) a Windows relay node, which acts as a network bridge between the Jetson and the cloud GPU server by hosting an HTTP relay service that exposes a /ping endpoint for latency measurement and forwards /infer requests; and (iii) an NVIDIA A6000 cloud GPU server, which runs the high-capacity YOLOv11x detector and returns detection outputs along with model execution time. All cloud-bound traffic follows the fixed communication path Jetson → Windows Relay → A6000 → Windows Relay → Jetson, enabling the Jetson to offload computation without directly connecting to or exposing the cloud server while providing a controlled point for monitoring latency and handling failures. Although this three-hop topology is not a fully realistic deployment architecture for production autonomous vehicles, the relay was intentionally introduced for experimental practicality to simplify network configuration and routing between heterogeneous systems, provides a stable and debuggable interface. The latency between Window Relay and Jetson was considered as the network latency between the cloud and local. 
-![Project Banner](./assets/img/flow.png)
+Total of 7967 frames are used for the experiment. The experimental system implements a three-node hybrid edge–cloud inference pipeline composed of (i) an NVIDIA Jetson edge device, which executes the main control logic, runs a lightweight CNN scene classifier, performs local object detection using YOLOv11n, and dynamically decides whether to offload inference; (ii) a Windows relay node, which acts as a network bridge between the Jetson and the cloud GPU server by hosting an HTTP relay service that exposes a /ping endpoint for latency measurement and forwards /infer requests; and (iii) an NVIDIA A6000 cloud GPU server, which runs the high-capacity YOLOv11x detector and returns detection outputs along with model execution time. All cloud-bound traffic follows the fixed communication path Jetson → Windows Relay → A6000 → Windows Relay → Jetson, enabling the Jetson to offload computation without directly connecting to or exposing the cloud server while providing a controlled point for monitoring latency and handling failures. Although this three-hop topology is not a fully realistic deployment architecture for production autonomous vehicles, the relay was intentionally introduced for experimental practicality to simplify network configuration and routing between heterogeneous systems, provides a stable and debuggable interface. The latency between Window Relay and Jetson was considered as the network latency between the cloud and local. Instruction to reporduce the experiemnts are explaind in the github repo linked in the section 7.b Software. 
+![Project Banner](./assets/img/flow2.png)
 Figure 4 Experimental three-node edge–cloud inference pipeline with a Jetson edge device, Windows relay for latency measurement and request forwarding, and an A6000 cloud GPU running YOLOv11x. The relay is used for experimental control and instrumentation rather than realistic AV deployment.
 
 Experiment Results:
@@ -137,7 +137,14 @@ Modeling or training the max perception latency allowed related to the current e
 
 # **6. References**
 
-Provide full citations for all sources (academic papers, websites, etc.) referenced and all software and datasets uses.
+**[Beaty25]** K. Beaty, “Waymo’s driverless cars are coming to Denver, but you can’t ride one yet,” *Denverite*, Sep. 2, 2025. [Online]. Available: <https://denverite.com/2025/09/02/denver-waymo-pilot-project-driverless-robo-taxi-2025/>. [Accessed: Dec. 12, 2025].
+
+**[Sun20]** P. Sun, H. Kretzschmar, X. Dotiwalla, A. Chouard, V. Patnaik, P. Tsui, J. Guo, Y. Zhou, Y. Chai, B. Caine, V. Vasudevan, W. Han, J. Ngiam, H. Zhao, A. Timofeev, S. Ettinger, M. Krivokon, A. Gao, A. Joshi, Y. Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in perception for autonomous driving: Waymo Open Dataset,” in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, Jun. 2020.
+
+**[Sela22]** G.-E. Sela, I. Gog, J. Wong, K. K. Agrawal, X. Mo, S. Kalra, P. Schafhalter, E. Leong, X. Wang, B. Balaji, J. Gonzalez, and I. Stoica, “Context-Aware Streaming Perception in Dynamic Environments,” arXiv preprint, arXiv:2208.07479, Aug. 2022. [Online]. Available: https://arxiv.org/abs/2208.07479. [Accessed: Dec. 12, 2025]. 
+
+**[Krentsel24]** A. Krentsel, P. Schafhalter, J. E. Gonzalez, S. Ratnasamy, S. Shenker, and I. Stoica, “Managing Bandwidth: The Key to Cloud-Assisted Autonomous Driving,” arXiv preprint, arXiv:2410.16227, Oct. 2024. [Online]. Available: https://arxiv.org/abs/2410.16227. [Accessed: Dec. 12, 2025]
+
 
 ---
 
@@ -156,7 +163,7 @@ Waymo Perception Dataset V2.0.1
 
 List:
 * Python 3.8, NumPy 1.24.2, OpenCV 4.6.0, Pillow 9.2.0, ONNX Runtime 1.19.2, YOLO 8.3.230
-* [Processed Data](https://github.com/JeanKwon/ECM202A_2025Fall_Project_8/blob/main/data/master_data.csv)
+* [Github Repo](https://github.com/JeanKwon/Context-Aware-Hybrid-Object-Detection-for-Autonomous-Vehicle-Perception)
 
 ---
 
