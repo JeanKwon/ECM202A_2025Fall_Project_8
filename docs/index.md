@@ -5,10 +5,7 @@ title: "Project Title"
 
 # **Context-Aware Hybrid Object Detection for Autonomous Vehicle Perception**
 
-*A concise, descriptive title for your project.*
-
 ![Project Banner](./assets/img/banner-placeholder.png)
-<sub>*(Optional: Replace with a conceptual figure or meaningful image.)*</sub>
 
 ---
 
